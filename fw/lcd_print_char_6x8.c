@@ -4,12 +4,11 @@
 
 
 
-void
-lcd_print_char(unsigned char c)
-{
+
+  /*
 	switch(c) {
 	case ' ': 
-		lcd_write(DATA, 0x00);
+	    lcd_write(DATA, 0x00);
 		lcd_write(DATA, 0x00);
 		lcd_write(DATA, 0x00);
 		lcd_write(DATA, 0x00);
@@ -778,3 +777,886 @@ lcd_print_char(unsigned char c)
 		break;
 	}
 }
+  */
+
+#define SET_BITMAP(bm, a, b, c, d, e, f) do { \
+	bm[0] = a;								  \
+	bm[1] = b;								  \
+	bm[2] = c;								  \
+	bm[3] = d;								  \
+	bm[4] = e;								  \
+	bm[5] = f;								  \
+  } while (0)
+
+void
+char_get_bitmap(unsigned char c, unsigned char bm[6])
+{
+	switch(c) {
+	case ' ': 
+	  SET_BITMAP(bm, 
+				 0x00, 
+				 0x00, 
+				 0x00,
+				 0x00,
+				 0x00,
+				 0x00);
+	  break;
+	case '!':
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x00,
+				 0x5f,
+				 0x00,
+				 0x00,
+				 0x00);
+		break;
+	case '"': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x07,
+				 0x00,
+				 0x07,
+				 0x00,
+				 0x00);
+	  break;
+	case '#':
+	  SET_BITMAP(bm, 
+				 0x14,
+				 0x3e,
+				 0x14,
+				 0x3e,
+				 0x14,
+				 0x00);
+		break;
+	case '$': 
+	  SET_BITMAP(bm, 
+				 0x24,
+				 0x2a,
+				 0x7f,
+				 0x2a,
+				 0x12,
+				 0x00);
+		break;
+	case '%': 
+	  SET_BITMAP(bm, 
+				 0x26,
+				 0x10,
+				 0x08,
+				 0x04,
+				 0x32,
+				 0x00);
+		break;
+	case '&': 
+	  SET_BITMAP(bm, 
+				 0x36,
+				 0x49,
+				 0x51,
+				 0x28,
+				 0x40,
+				 0x00);
+		break;
+	case '\'': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x00,
+				 0x07,
+				 0x00,
+				 0x00,
+				 0x00);
+		break;
+	case '(': 
+	  SET_BITMAP(bm, 
+				 0x3e,
+				 0x41,
+				 0x00,
+				 0x00,
+				 0x00,
+				 0x00);
+		break;
+	case ')': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x00,
+				 0x00,
+				 0x41,
+				 0x3e,
+				 0x00);
+		break;
+	case '*': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x2a,
+				 0x1c,
+				 0x2a,
+				 0x00,
+				 0x00);
+		break;
+	case '+': 
+	  SET_BITMAP(bm, 
+				 0x08,
+				 0x08,
+				 0x3e,
+				 0x08,
+				 0x08,
+				 0x00);
+		break;
+	case ',': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x80,
+				 0x60,
+				 0x20,
+				 0x00,
+				 0x00);
+	  break;
+	case '-': 
+	  SET_BITMAP(bm, 
+				 0x08,
+				 0x08,
+				 0x08,
+				 0x08,
+				 0x08,
+				 0x00);
+		break;
+	case '.': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x60,
+				 0x60,
+				 0x00,
+				 0x00,
+				 0x00);
+		break;
+	case '/': 
+	  SET_BITMAP(bm, 
+				 0x20,
+				 0x10,
+				 0x08,
+				 0x04,
+				 0x02,
+				 0x00);
+		break;
+	case '0': 
+	  SET_BITMAP(bm, 
+				 0x3e,
+				 0x51,
+				 0x49,
+				 0x45,
+				 0x3e,
+				 0x00);
+		break;
+	case '1': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x42,
+				 0x7f,
+				 0x40,
+				 0x00,
+				 0x00);
+		break;
+	case '2': 
+	  SET_BITMAP(bm, 
+				 0x42,
+				 0x61,
+				 0x51,
+				 0x49,
+				 0x46,
+				 0x00);
+		break;
+	case '3': 
+	  SET_BITMAP(bm, 
+				 0x21,
+				 0x41,
+				 0x45,
+				 0x4b,
+				 0x31,
+				 0x00);
+		break;
+	case '4':
+	  SET_BITMAP(bm,  
+				 0x18,
+				 0x14,
+				 0x12,
+				 0x7f,
+				 0x10,
+				 0x00);
+		break;
+	case '5': 
+	  SET_BITMAP(bm, 
+				 0x27,
+				 0x45,
+				 0x45,
+				 0x45,
+				 0x39,
+				 0x00);
+		break;
+	case '6': 
+	  SET_BITMAP(bm, 
+				 0x3c,
+				 0x4a,
+				 0x49,
+				 0x49,
+				 0x30,
+				 0x00);
+		break;
+	case '7': 
+	  SET_BITMAP(bm, 
+				 0x01,
+				 0x71,
+				 0x09,
+				 0x05,
+				 0x03,
+				 0x00);
+		break;
+	case '8': 
+	  SET_BITMAP(bm, 
+				 0x36,
+				 0x49,
+				 0x49,
+				 0x49,
+				 0x36,
+				 0x00);
+		break;
+	case '9': 
+	  SET_BITMAP(bm, 
+				 0x06,
+				 0x49,
+				 0x49,
+				 0x29,
+				 0x1e,
+				 0x00);
+		break;
+	case ':': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x36,
+				 0x36,
+				 0x00,
+				 0x00,
+				 0x00);
+	  break;
+	case ';': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x80,
+				 0x6c,
+				 0x2c,
+				 0x00,
+				 0x00);
+		break;
+	case '<': 
+	  SET_BITMAP(bm, 
+				 0x08,
+				 0x14,
+				 0x22,
+				 0x41,
+				 0x00,
+				 0x00);
+	  break;
+	case '=': 
+	  SET_BITMAP(bm, 
+				 0x14,
+				 0x14,
+				 0x14,
+				 0x14,
+				 0x14,
+				 0x00);
+	  break;
+	case '>': 
+	  SET_BITMAP(bm, 
+				 0x00,
+				 0x41,
+				 0x22,
+				 0x14,
+				 0x08,
+				 0x00);
+	  break;
+	case '?': 
+	  SET_BITMAP(bm, 
+				 0x02,
+				 0x01,
+				 0x51,
+				 0x09,
+				 0x06,
+				 0x00);
+	  break;
+	case '@': 
+	  SET_BITMAP(bm, 
+				 0x3e,
+				 0x41,
+				 0x5d,
+				 0x55,
+				 0x0e,
+				 0x00);
+	  break;
+	case 'A': 
+	  SET_BITMAP(bm,  
+				 0x7e,
+				 0x11,
+				 0x11,
+				 0x11,
+				 0x7e,
+				 0x00); 
+	  break;
+	case 'B': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x49,
+				 0x49,
+				 0x49,
+				 0x36,
+				 0x00); 
+	  break;
+	case 'C': 
+	  SET_BITMAP(bm,  
+				 0x3e,
+				 0x41,
+				 0x41,
+				 0x41,
+				 0x22,
+				 0x00); 
+	  break;
+	case 'D': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x41,
+				 0x41,
+				 0x22,
+				 0x1c,
+				 0x00); 
+	  break;
+	case 'E': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x49,
+				 0x49,
+				 0x49,
+				 0x41,
+				 0x00); 
+	  break;
+	case 'F': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x09,
+				 0x09,
+				 0x09,
+				 0x01,
+				 0x00); 
+	  break;
+	case 'G': 
+	  SET_BITMAP(bm,  
+				 0x3e,
+				 0x41,
+				 0x41,
+				 0x51,
+				 0x32,
+				 0x00); 
+	  break;
+	case 'H': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x08,
+				 0x08,
+				 0x08,
+				 0x7f,
+				 0x00); 
+	  break;
+	case 'I': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x41,
+				 0x7f,
+				 0x41,
+				 0x00,
+				 0x00); 
+	  break;
+	case 'J': 
+	  SET_BITMAP(bm,  
+				 0x20,
+				 0x40,
+				 0x41,
+				 0x3f,
+				 0x01,
+				 0x00); 
+	  break;
+	case 'K': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x08,
+				 0x14,
+				 0x22,
+				 0x41,
+				 0x00); 
+	  break;
+	case 'L': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x00); 
+	  break;
+	case 'M': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x02,
+				 0x04,
+				 0x02,
+				 0x7f,
+				 0x00); 
+	  break;
+	case 'N': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x04,
+				 0x08,
+				 0x10,
+				 0x7f,
+				 0x00); 
+	  break;
+	case 'O': 
+	  SET_BITMAP(bm,  
+				 0x3e,
+				 0x41,
+				 0x41,
+				 0x41,
+				 0x3e,
+				 0x00); 
+	  break;
+	case 'P': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x09,
+				 0x09,
+				 0x09,
+				 0x06,
+				 0x00); 
+	  break;
+	case 'Q': 
+	  SET_BITMAP(bm,  
+				 0x3e,
+				 0x41,
+				 0x51,
+				 0x21,
+				 0x5e,
+				 0x00); 
+	  break;
+	case 'R': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x09,
+				 0x19,
+				 0x29,
+				 0x46,
+				 0x00); 
+	  break;
+	case 'S': 
+	  SET_BITMAP(bm,  
+				 0x46,
+				 0x49,
+				 0x49,
+				 0x49,
+				 0x31,
+				 0x00); 
+	  break;
+	case 'T': 
+	  SET_BITMAP(bm,  
+				 0x01,
+				 0x01,
+				 0x7f,
+				 0x01,
+				 0x01,
+				 0x00); 
+	  break;
+	case 'U': 
+	  SET_BITMAP(bm,  
+				 0x3f,
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x3f,
+				 0x00); 
+	  break;
+	case 'V': 
+	  SET_BITMAP(bm,  
+				 0x1f,
+				 0x20,
+				 0x40,
+				 0x20,
+				 0x1f,
+				 0x00); 
+	  break;
+	case 'W': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x20,
+				 0x18,
+				 0x20,
+				 0x7f,
+				 0x00); 
+	  break;
+	case 'X': 
+	  SET_BITMAP(bm,  
+				 0x63,
+				 0x14,
+				 0x08,
+				 0x14,
+				 0x63,
+				 0x00); 
+	  break;
+	case 'Y': 
+	  SET_BITMAP(bm,  
+				 0x03,
+				 0x04,
+				 0x78,
+				 0x04,
+				 0x03,
+				 0x00);
+	  break;
+	case 'Z': 
+	  SET_BITMAP(bm,  
+				 0x61,
+				 0x51,
+				 0x49,
+				 0x45,
+				 0x43,
+				 0x00);
+	  break;
+	case '[': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x41,
+				 0x41,
+				 0x00,
+				 0x00,
+				 0x00); 
+	  break;
+	case '\\':
+	  SET_BITMAP(bm,  
+				 0x02,
+				 0x04,
+				 0x08,
+				 0x10,
+				 0x20,
+				 0x00); 
+	  break;
+	case ']': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x00,
+				 0x41,
+				 0x41,
+				 0x7f,
+				 0x00); 
+	  break;
+	case '^': 
+	  SET_BITMAP(bm,  
+				 0x04,
+				 0x02,
+				 0x01,
+				 0x02,
+				 0x04,
+				 0x00); 
+	  break;
+	case '_': 
+	  SET_BITMAP(bm,  
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x40,
+				 0x00); 
+	  break;
+	case '`': 
+	  SET_BITMAP(bm,  
+				 0x01,
+				 0x02,
+				 0x00,
+				 0x00,
+				 0x00,
+				 0x00); 
+	  break;
+	case 'a': 
+	  SET_BITMAP(bm,  
+				 0x20,
+				 0x54,
+				 0x54,
+				 0x24,
+				 0x78,
+				 0x00); 
+	  break;
+	case 'b': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x28,
+				 0x44,
+				 0x44,
+				 0x38,
+				 0x00); 
+	  break;
+	case 'c': 
+	  SET_BITMAP(bm,  
+				 0x38,
+				 0x44,
+				 0x44,
+				 0x44,
+				 0x28,
+				 0x00); 
+	  break;
+	case 'd': 
+	  SET_BITMAP(bm,  
+				 0x38,
+				 0x44,
+				 0x44,
+				 0x28,
+				 0x7f,
+				 0x00); 
+	  break;
+	case 'e': 
+	  SET_BITMAP(bm,  
+				 0x38,
+				 0x54,
+				 0x54,
+				 0x54,
+				 0x18,
+				 0x00); 
+	  break;
+	case 'f': 
+	  SET_BITMAP(bm,  
+				 0x08,
+				 0x7e,
+				 0x09,
+				 0x09,
+				 0x02,
+				 0x00); 
+	  break;
+	case 'g': 
+	  SET_BITMAP(bm,  
+				 0x58,
+				 0xa4,
+				 0xa4,
+				 0x94,
+				 0x78,
+				 0x00); 
+	  break;
+	case 'h': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x08,
+				 0x04,
+				 0x04,
+				 0x78,
+				 0x00); 
+	  break;
+	case 'i': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x44,
+				 0x7d,
+				 0x40,
+				 0x00,
+				 0x00); 
+	  break;
+	case 'j': 
+	  SET_BITMAP(bm,  
+				 0x60,
+				 0x80,
+				 0x84,
+				 0x7d,
+				 0x00,
+				 0x00); 
+	  break;
+	case 'k': 
+	  SET_BITMAP(bm,  
+				 0x7f,
+				 0x10,
+				 0x18,
+				 0x24,
+				 0x40,
+				 0x00); 
+	  break;
+	case 'l': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x41,
+				 0x7f,
+				 0x40,
+				 0x00,
+				 0x00); 
+	  break;
+	case 'm': 
+	  SET_BITMAP(bm,  
+				 0x7c,
+				 0x04,
+				 0x18,
+				 0x04,
+				 0x78,
+				 0x00); 
+	  break;
+	case 'n': 
+	  SET_BITMAP(bm,  
+				 0x7c,
+				 0x08,
+				 0x04,
+				 0x04,
+				 0x78,
+				 0x00); 
+	  break;
+	case 'o': 
+	  SET_BITMAP(bm,  
+				 0x38,
+				 0x44,
+				 0x44,
+				 0x44,
+				 0x38,
+				 0x00); 
+	  break;
+	case 'p': 
+	  SET_BITMAP(bm,  
+				 0xfc,
+				 0x24,
+				 0x24,
+				 0x24,
+				 0x18,
+				 0x00); 
+	  break;
+	case 'q': 
+	  SET_BITMAP(bm,  
+				 0x18,
+				 0x24,
+				 0x24,
+				 0x24,
+				 0xf8,
+				 0x00); 
+	  break;
+	case 'r': 
+	  SET_BITMAP(bm,  
+				 0x7c,
+				 0x08,
+				 0x04,
+				 0x04,
+				 0x08,
+				 0x00); 
+	  break;
+	case 's': 
+	  SET_BITMAP(bm,  
+				 0x48,
+				 0x54,
+				 0x54,
+				 0x54,
+				 0x24,
+				 0x00); 
+	  break;
+	case 't': 
+	  SET_BITMAP(bm,  
+				 0x04,
+				 0x3e,
+				 0x44,
+				 0x44,
+				 0x20,
+				 0x00); 
+	  break;
+	case 'u': 
+	  SET_BITMAP(bm,  
+				 0x3c,
+				 0x40,
+				 0x40,
+				 0x20,
+				 0x7c,
+				 0x00); 
+	  break;
+	case 'v': 
+	  SET_BITMAP(bm,  
+				 0x0c,
+				 0x30,
+				 0x40,
+				 0x30,
+				 0x0c,
+				 0x00); 
+	  break;
+	case 'w': 
+	  SET_BITMAP(bm,  
+				 0x3c,
+				 0x40,
+				 0x30,
+				 0x40,
+				 0x3c,
+				 0x00); 
+	  break;
+	case 'x': 
+	  SET_BITMAP(bm,  
+				 0x44,
+				 0x28,
+				 0x10,
+				 0x28,
+				 0x44,
+				 0x00); 
+	  break;
+	case 'y': 
+	  SET_BITMAP(bm,  
+				 0x5c,
+				 0xa0,
+				 0xa0,
+				 0x90,
+				 0x7c,
+				 0x00); 
+	  break;
+	case 'z': 
+	  SET_BITMAP(bm,  
+				 0x44,
+				 0x64,
+				 0x54,
+				 0x4c,
+				 0x44,
+				 0x00); 
+	  break;
+	case '{': 
+	  SET_BITMAP(bm,  
+				 0x08,
+				 0x36,
+				 0x41,
+				 0x00,
+				 0x00,
+				 0x00);
+	  break;
+	case '|': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x00,
+				 0x7f,
+				 0x00,
+				 0x00,
+				 0x00); 
+	  break;
+	case '}': 
+	  SET_BITMAP(bm,  
+				 0x00,
+				 0x00,
+				 0x41,
+				 0x36,
+				 0x08,
+				 0x00); 
+	  break;
+	case '~': 
+	  SET_BITMAP(bm,  
+				 0x08,
+				 0x04,
+				 0x08,
+				 0x10,
+				 0x08,
+				 0x00); 
+	  break;
+	default: 
+	  SET_BITMAP(bm, 
+				 0xff,
+				 0xff,
+				 0xff,
+				 0xff,
+				 0xff,
+				 0x00);
+	  break;
+    }
+}
+
+

@@ -205,7 +205,7 @@ lcd_init()
   
 }
 
-#define SET_PAGE(x)  lcd_out(0xB0 | (x&0x0f), 0)
+#define SET_PAGE(x)  lcd_out(0xB0 | ((x)&0x0f), 0)
 #define SET_COL(x)  do {							\
   lcd_out( 0x10 | ((x)&0xf0)>>4, 0);				\
   lcd_out( 0x00 | (x)&0x0f    , 0);				\
@@ -256,6 +256,52 @@ serial_init(void)
 #include "lcd_print_char_6x8.c"
 
 
+/*
+ *  these take abcdXXXX -> aabbccdd
+ *
+ */
+#define DOUBLE_HIGH_NYBBLE(c)  	  ((c & 0x80)>>0 | (c & 0x80)>>1 | \
+								   (c & 0x40)>>1 | (c & 0x40)>>2 | \
+								   (c & 0x20)>>2 | (c & 0x20)>>3 | \
+								   (c & 0x10)>>3 | (c & 0x10)>>4)
+
+#define DOUBLE_LOW_NYBBLE(c)  	  ((c & 0x08)<<4 | (c & 0x08)<<3 | \
+								   (c & 0x04)<<3 | (c & 0x04)<<2 | \
+								   (c & 0x02)<<2 | (c & 0x02)<<1 | \
+								   (c & 0x01)<<1 | (c & 0x01)<<0)
+
+
+unsigned char page = 0;
+unsigned char col = 0;
+
+
+void
+lcd_print_char(unsigned char c)
+{
+  unsigned char i,j;
+  unsigned char bm[6];
+  unsigned char o; 
+  char_get_bitmap(c, bm);
+  for (i = 0; i < 6; i++) { 
+	o = DOUBLE_LOW_NYBBLE(bm[i]);
+
+	lcd_write(DATA, o);
+	lcd_write(DATA, o);
+  }
+  SET_PAGE(page+1);
+  SET_COL(col);
+  for (i = 0; i < 6; i++) { 
+	o = DOUBLE_HIGH_NYBBLE(bm[i]);
+
+	lcd_write(DATA, o);
+	lcd_write(DATA, o);
+  }
+  SET_PAGE(page);
+
+}
+
+
+
 int
 main(void)
 { 
@@ -275,8 +321,8 @@ main(void)
   lcd_init();
   unsigned char i;
   unsigned char v = 0x20;
-  unsigned char page = 0;
-  unsigned char col = 0;
+
+
   unsigned short blc  = 0;
   unsigned short blv  = 9;
 
@@ -298,13 +344,13 @@ main(void)
 	  clrscr();
 	  break;
 	case 0x08:
-	  if (col > 0) col-=6;
+	  if (col > 0) col-= 2*6;
 	  SET_COL(col);
 	  lcd_print_char(' ');
 	  SET_COL(col);
 	  break;
 	case '\r':
-	  page+=1;
+	  page+=2*1;
 	  col = 0;
 	  SET_PAGE(page);
 	  SET_COL(0);
@@ -324,8 +370,11 @@ main(void)
 	  }
 	  break;
 	default:
-	  col+=6;
+
+	  SET_COL(col);
+	  SET_PAGE(page);
 	  lcd_print_char(c);
+	  col+=2*6;
 	}
 
   }
