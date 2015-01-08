@@ -276,27 +276,40 @@ unsigned char col = 0;
 
 
 void
-lcd_print_char(unsigned char c)
+lcd_print_char(unsigned char c, 
+			   unsigned char r, unsigned char co,
+			   unsigned char double_size)
 {
   unsigned char i,j;
   unsigned char bm[6];
   unsigned char o; 
   char_get_bitmap(c, bm);
+  SET_PAGE(r);
+  SET_COL(co);
   for (i = 0; i < 6; i++) { 
-	o = DOUBLE_LOW_NYBBLE(bm[i]);
+	if (double_size) { 
+	  o = DOUBLE_LOW_NYBBLE(bm[i]);
+	} else { 
+	  o = bm[i];
+	}
 
 	lcd_write(DATA, o);
-	lcd_write(DATA, o);
-  }
-  SET_PAGE(page+1);
-  SET_COL(col);
-  for (i = 0; i < 6; i++) { 
-	o = DOUBLE_HIGH_NYBBLE(bm[i]);
 
-	lcd_write(DATA, o);
-	lcd_write(DATA, o);
+	if (double_size) { 
+	  lcd_write(DATA, o);
+	}
   }
-  SET_PAGE(page);
+
+  if (double_size) { 
+	SET_PAGE(r+1);
+	SET_COL(co);
+	for (i = 0; i < 6; i++) { 
+	  o = DOUBLE_HIGH_NYBBLE(bm[i]);
+	  
+	  lcd_write(DATA, o);
+	  lcd_write(DATA, o);
+	}
+  }
 
 }
 
@@ -325,7 +338,8 @@ main(void)
 
   unsigned short blc  = 0;
   unsigned short blv  = 9;
-
+  
+  unsigned char double_size = 0;
   clrscr();
   SET_PAGE(0);
   SET_COL(0);
@@ -344,16 +358,15 @@ main(void)
 	  clrscr();
 	  break;
 	case 0x08:
-	  if (col > 0) col-= 2*6;
-	  SET_COL(col);
-	  lcd_print_char(' ');
-	  SET_COL(col);
+	  if (col > 0) col-= 6+double_size*5;
+	  lcd_print_char(' ', page, col, double_size);
 	  break;
 	case '\r':
-	  page+=2*1;
+	  page+= 1 + double_size;
 	  col = 0;
-	  SET_PAGE(page);
-	  SET_COL(0);
+	  break;
+	case 0x07:
+	  double_size = (double_size+1)%2;
 	  break;
 	case 0x1b:
 	  // backlight down
@@ -370,11 +383,9 @@ main(void)
 	  }
 	  break;
 	default:
-
-	  SET_COL(col);
-	  SET_PAGE(page);
-	  lcd_print_char(c);
-	  col+=2*6;
+	  lcd_print_char(c, page, col, double_size);
+	  
+	  col+=6+double_size*5;
 	}
 
   }
